@@ -11,6 +11,7 @@ import RealityKit
 
 struct ARViewContainer: UIViewRepresentable {
     @ObservedObject var manager: FaceTrackingManager
+    var onARViewReady: (ARView) -> Void
     
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero)
@@ -24,7 +25,8 @@ struct ARViewContainer: UIViewRepresentable {
         config.isLightEstimationEnabled = true
         arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
         
-        manager.setup(arView: arView)  
+        manager.setup(arView: arView)
+        onARViewReady(arView)
         return arView
     }
     
