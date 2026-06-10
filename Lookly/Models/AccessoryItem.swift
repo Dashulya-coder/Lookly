@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RealityKit
 
 enum AccessoryCategory: String, CaseIterable {
     case glasses = "Glasses"
@@ -22,4 +23,8 @@ struct AccessoryItem: Identifiable {
     let category: AccessoryCategory
     let content: AccessoryContent
     let thumbnailName: String
+    
+    let position: SIMD3<Float>
+    let scale: SIMD3<Float>
+    let orientation: simd_quatf
 }

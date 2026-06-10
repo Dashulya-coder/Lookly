@@ -73,7 +73,7 @@ struct ContentView: View {
     private func iconName(for category: AccessoryCategory) -> String {
         switch category {
         case .glasses: return "eyeglasses"
-        case .hats:    return "sportscourt"
+        case .hats:    return "bowler hat"
         }
     }
 }

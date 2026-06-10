@@ -41,15 +41,10 @@ class FaceTrackingManager: NSObject, ObservableObject, ARSessionDelegate {
         do {
             let entity = try Entity.loadModel(contentsOf: url)
             
-            // Position depends on category
-            switch item.category {
-            case .glasses:
-                entity.position = [0, -0.01, 0.07]
-                entity.scale = [1, 1, 1]
-            case .hats:
-                entity.position = [0, 0.18, -0.02]
-                entity.scale = [1, 1, 1]
-            }
+            // Position depends on iten
+            entity.position = item.position
+            entity.scale = item.scale
+            entity.orientation = item.orientation
             
             faceAnchorEntity?.addChild(entity)
             currentEntity = entity
@@ -59,6 +54,7 @@ class FaceTrackingManager: NSObject, ObservableObject, ARSessionDelegate {
             print("Error downloading model: \(error)")
         }
     }
+    
     
     func removeAccessory() {
         currentEntity?.removeFromParent()
