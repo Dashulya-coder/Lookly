@@ -6,18 +6,52 @@
 //
 
 import SwiftUI
+import RealityKit
 
 struct ContentView: View {
     @StateObject private var manager = FaceTrackingManager()
+    @State private var arView: ARView?
+    @State private var showSavedBanner = false
     
     var body: some View {
         ZStack {
             
-            ARViewContainer(manager: manager)
-                .ignoresSafeArea()
+            ARViewContainer(manager: manager) { view in
+                DispatchQueue.main.async {
+                    arView = view
+                }
+            }
+            .ignoresSafeArea()
             
             VStack {
+                
+                if showSavedBanner {
+                    Text("Saved in gallery!")
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.6))
+                        .foregroundColor(.white)
+                        .clipShape(Capsule())
+                        .transition(.opacity)
+                        .padding(.top, 60)
+                }
+                
                 Spacer()
+                
+                HStack {
+                    
+                    Button {
+                        takePhoto()
+                    } label: {
+                        Image(systemName: "camera.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.white)
+                            .shadow(radius: 4)
+                    }
+                    .padding(.leading, 20)
+                    
+                    Spacer()
+                }
                 
                 // Scrolling horizontally
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -66,6 +100,35 @@ struct ContentView: View {
                     .padding(.horizontal)
                 }
                 .padding(.bottom, 40)
+            }
+        }
+    }
+    
+    //snapshot is no longer done in main stream!!!
+    
+    private func takePhoto() {
+        guard let arView else { return }
+        
+        arView.snapshot(saveToHDR: false) { image in
+            guard let image else { return }
+            
+            // save in background
+            DispatchQueue.global(qos: .background).async {
+                PhotoSaver.save(image) { success in
+                    // UI only in main
+                    DispatchQueue.main.async {
+                        if success {
+                            withAnimation {
+                                showSavedBanner = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation {
+                                    showSavedBanner = false
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
