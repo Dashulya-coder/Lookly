@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var showSavedBanner = false
     @State private var flashOpacity: Double = 0
     @State private var showCatalog = false
+    @State private var showGallery = false
     
     var body: some View {
         ZStack {
@@ -47,7 +48,7 @@ struct ContentView: View {
                 Spacer()
                 
                 // Three buttons
-                HStack(spacing: 24) {
+                HStack(spacing: 32) {
                     
                     // Put off
                     Button {
@@ -85,6 +86,20 @@ struct ContentView: View {
                                 .font(.caption2)
                                 .foregroundColor(.white)
                         }
+                        
+                    }
+                    
+                    Button {
+                        showGallery = true
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: "photo.on.rectangle")
+                                .font(.system(size: 36))
+                                .foregroundColor(.white)
+                            Text("Gallery")
+                                .font(.caption2)
+                                .foregroundColor(.white)
+                        }
                     }
                 }
                 .padding(.bottom, 50)
@@ -95,7 +110,11 @@ struct ContentView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        
+        .sheet(isPresented: $showGallery) {
+            GalleryView(isPresented: $showGallery)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
     
     //snapshot is no longer done in main stream!!!
